@@ -1,0 +1,80 @@
+<template>
+    <lightning-card title="Movie Importer" icon-name="standard:record">
+        <div class="slds-p-around_medium">
+
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_10-of-12">
+                    <lightning-input
+                        type="text"
+                        label="Zoek een film"
+                        value={searchTerm}
+                        onchange={handleSearchTermChange}
+                        placeholder="Bijvoorbeeld: Inception">
+                    </lightning-input>
+                </div>
+
+                <div class="slds-col slds-size_2-of-12 slds-align-bottom">
+                    <lightning-button
+                        label="Zoek"
+                        variant="brand"
+                        onclick={handleSearch}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </div>
+            </div>
+
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <template if:true={movies.length}>
+                <div class="slds-m-top_medium">
+                    <div class="slds-text-heading_small slds-m-bottom_small">Zoekresultaten</div>
+
+                    <template for:each={movies} for:item="movie">
+                        <div key={movie.movieId} class="slds-box slds-m-bottom_small">
+                            <div class="slds-grid slds-gutters slds-wrap">
+                                <div class="slds-col slds-size_1-of-12">
+                                    <lightning-input
+                                        type="checkbox"
+                                        data-id={movie.movieId}
+                                        checked={movie.selected}
+                                        onchange={handleMovieSelection}>
+                                    </lightning-input>
+                                </div>
+
+                                <div class="slds-col slds-size_2-of-12">
+                                    <template if:true={movie.posterUrl}>
+                                        <img src={movie.posterUrl} alt={movie.title} style="max-width: 90px;" />
+                                    </template>
+                                </div>
+
+                                <div class="slds-col slds-size_9-of-12">
+                                    <p><strong>{movie.title}</strong></p>
+                                    <p>Movie ID: {movie.movieId}</p>
+                                    <p>Release date: {movie.releaseDate}</p>
+                                    <p>{movie.overview}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <lightning-button
+                        class="slds-m-top_medium"
+                        label="Importeer geselecteerde films"
+                        variant="success"
+                        onclick={handleImport}
+                        disabled={disableImportButton}>
+                    </lightning-button>
+                </div>
+            </template>
+
+            <template if:true={hasSearched}>
+                <template if:false={movies.length}>
+                    <p class="slds-m-top_medium">Geen films gevonden.</p>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
